@@ -1,0 +1,32 @@
+#!/bin/bash 
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this program. If not, see <https://www.gnu.org/licenses/>. 
+
+set -euo pipefail
+
+if [[ "$#" != "1" ]] ; then 
+  echo "stanzaup called with wrong number of arguments."
+fi
+
+STANZA_INSTALL_PATH="$HOME/.local/share/stanza-$1"
+STANZA_VERSION=$(sed 's/\./_/g' <<< "$1")
+STANZA_BIN="lstanza_$STANZA_VERSION.zip"
+STANZA_DL_URL="http://lbstanza.org/resources/stanza/$STANZA_BIN"
+curl $STANZA_DL_URL --output "/tmp/stanza.zip"
+unzip /tmp/stanza.zip -d "$STANZA_INSTALL_PATH"
+cd ~/.local/bin
+rm -f stanza
+ln -s $STANZA_INSTALL_PATH/stanza stanza
+cd $STANZA_INSTALL_PATH
+./stanza install -platform linux
+echo "Stanza $1 installed successfully!"
+
